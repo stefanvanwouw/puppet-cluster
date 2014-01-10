@@ -52,5 +52,13 @@ class cluster (
     }
     class { 'zookeeper::server': }
 
+    class {'ganglia::client': 
+        cluster => 'cluster',
+        network_mode => 'unicast',
+        unicast_targets => [
+            {'ipaddress' => $master, 'port' => '8649'}
+        ],
+        send_metadata_interval => 5,
+    }
 
 }

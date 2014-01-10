@@ -43,5 +43,28 @@ class cluster::master (
         spark_worker_memory => $worker_mem,
     }
 
+#    class {'presto::master':
+#    }
+
+    class {'ganglia::server': 
+        gridname => 'Benchmark',
+        clusters => [
+            {
+                cluster_name => 'cluster', 
+                cluster_hosts => concat([$::fqdn],$workers),
+            }
+        ],
+        
+    }
+    
+    class { 'apache':
+        default_vhost => false,
+        mpm_module => 'prefork',
+    }
+    include apache::mod::php
+
+    class {'ganglia::webserver': 
+    }  
+
 
 }

@@ -34,6 +34,9 @@ class cluster::worker (
         require => Class['cdh4::hadoop::worker'],
     }
 
+#    class {'presto::worker':
+#        master => $master,
+#    }
 
 
 }
