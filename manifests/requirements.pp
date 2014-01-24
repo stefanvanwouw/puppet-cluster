@@ -1,8 +1,9 @@
 class cluster::requirements {
    
-    package {'git':
+    package {['git', 'python-pip','collectl']:
         ensure => installed,
     }
+    class { 'apt': }
 
     apt::source {'cdh4':
         location     => 'http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh',
@@ -30,5 +31,10 @@ class cluster::requirements {
     package { 'oracle-java6-installer':
        ensure  => installed,
        require => [Apt::Source['webupd8team-java'], Exec['accept-java-license']],
+    }
+
+    package{'requests':
+        ensure   => installed,
+        provider => 'pip',
     }
 }

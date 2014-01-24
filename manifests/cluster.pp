@@ -33,7 +33,7 @@ class cluster (
         datanode_mounts    => $data_dirs,
         ganglia_hosts      => ["${master}:8649"],
         dfs_name_dir       => $name_dir,
-        require            => cluster::mount[$mount_dirs],
+        require            => Cluster::Mount[$mount_dirs],
     }
 
     $zookeeper_hosts = concat([$master], $workers)
@@ -52,13 +52,13 @@ class cluster (
     }
     class { 'zookeeper::server': }
 
-    class {'ganglia::client': 
-        cluster => 'cluster',
-        network_mode => 'unicast',
-        unicast_targets => [
-            {'ipaddress' => $master, 'port' => '8649'}
-        ],
-        send_metadata_interval => 5,
-    }
+#    class {'ganglia::client': 
+#        cluster => 'cluster',
+#        network_mode => 'unicast',
+#        unicast_targets => [
+#            {'ipaddress' => $master, 'port' => '8649'}
+#        ],
+#        send_metadata_interval => 5,
+#    }
 
 }
