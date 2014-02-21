@@ -3,6 +3,7 @@ class cluster::master (
     $management_user_home,
     $management_key_source,
     $worker_mem,
+    $mode,
     $mount_to_device_map = $::cluster::defaults::mount_to_device_map,
     $name_dir = $::cluster::defaults::name_dir
 ) inherits cluster::defaults {
@@ -10,6 +11,7 @@ class cluster::master (
     
     # Unable to pass parameters to base class in 2.7; This is a workaround.
     class {'cluster':
+        worker_mem            => $worker_mem,
         master                => "${::fqdn}",
         workers               => $workers,
         mount_to_device_map   => $mount_to_device_map,
@@ -24,6 +26,10 @@ class cluster::master (
     }
 
     class {'impala::master':
+        impala_service_status => $mode ? {
+            'impala' => 'running',
+            default  => 'stopped'
+        },
     }
 
     class { '::mysql::server':
@@ -36,13 +42,13 @@ class cluster::master (
     }
 
     class {'spark::master':
+        spark_service_status => $mode ? {
+            'spark' => 'running',
+            default => 'stopped',
+        },
         worker_mem => $worker_mem,
     }
     
-    class {'shark':
-        master              => "${::fqdn}",
-        spark_worker_memory => $worker_mem,
-    }
 
 #    class {'presto::master':
 #    }

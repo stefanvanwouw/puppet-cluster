@@ -1,9 +1,13 @@
 class cluster::requirements {
-   
-    package {['git', 'python-pip','collectl']:
-        ensure => installed,
+    class {'collectl':
+        service_status => stopped,
+        daemon_cmds    => '-f /var/log/collectl -r00:00,7 -i:1 -smndcZ -oT --procfilt cjava,cimpala'
     }
-    class { 'apt': }
+   
+
+    class { 'apt': 
+        always_apt_update => true,
+    }
 
     apt::source {'cdh4':
         location     => 'http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh',
@@ -25,10 +29,10 @@ class cluster::requirements {
    
     exec { 'accept-java-license':
         command => '/bin/echo /usr/bin/debconf shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections;/bin/echo /usr/bin/debconf shared/accepted-oracle-license-v1-1 seen true | sudo /usr/bin/debconf-set-selections;',
-        creates => '/usr/lib/jvm/java-6-oracle'
+        creates => '/usr/lib/jvm/java-7-oracle'
       }
 
-    package { 'oracle-java6-installer':
+    package { 'oracle-java7-installer':
        ensure  => installed,
        require => [Apt::Source['webupd8team-java'], Exec['accept-java-license']],
     }

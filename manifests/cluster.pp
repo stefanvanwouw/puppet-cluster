@@ -4,6 +4,7 @@ class cluster (
     $mount_to_device_map,
     $management_key_source,
     $management_user_home,
+    $worker_mem,
     $mount_options = $::cluster::defaults::mount_options,
     $fs_type = $::cluster::defaults::fs_type,
     $name_dir = $::cluster::defaults::name_dir,
@@ -33,6 +34,10 @@ class cluster (
         datanode_mounts    => $data_dirs,
         ganglia_hosts      => ["${master}:8649"],
         dfs_name_dir       => $name_dir,
+        yarn_nodemanager_resource_memory_mb => $mode ? {
+            'hive' => 61440, # TODO: Make this nice, default 60g.
+            default => 8192,
+        },
         require            => Cluster::Mount[$mount_dirs],
     }
 
@@ -45,6 +50,10 @@ class cluster (
     }
 
 
+    class {'shark':
+        master              => $master,
+        spark_worker_memory => $worker_mem,
+    }
 
     class { 'zookeeper':
         hosts    => hash(flatten(zip($zookeeper_hosts, range('1', size($zookeeper_hosts))))),
