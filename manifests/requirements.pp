@@ -6,7 +6,7 @@ class cluster::requirements {
    
 
     class { 'apt': 
-        always_apt_update => true,
+#        always_apt_update => true,
     }
 
     apt::source {'cdh4':
