@@ -12,6 +12,7 @@ class cluster::worker (
 
     # Unable to pass parameters to base class in 2.7; This is a workaround.
     class {'cluster':
+        mode                  => $mode,
         worker_mem            => $worker_mem,
         master                => $master,
         workers               => $workers,

@@ -11,6 +11,7 @@ class cluster::master (
     
     # Unable to pass parameters to base class in 2.7; This is a workaround.
     class {'cluster':
+        mode                  => $mode,
         worker_mem            => $worker_mem,
         master                => "${::fqdn}",
         workers               => $workers,
@@ -48,6 +49,7 @@ class cluster::master (
         },
         worker_mem => $worker_mem,
     }
+
     
 
 #    class {'presto::master':

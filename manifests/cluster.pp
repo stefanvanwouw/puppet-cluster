@@ -5,13 +5,18 @@ class cluster (
     $management_key_source,
     $management_user_home,
     $worker_mem,
+    $mode,
     $mount_options = $::cluster::defaults::mount_options,
     $fs_type = $::cluster::defaults::fs_type,
     $name_dir = $::cluster::defaults::name_dir,
     $data_dirs = $::cluster::defaults::data_dirs,
 ) inherits cluster::defaults {
     require cluster::remove-conflicts
-    require cluster::requirements
+    
+    class {'cluster::requirements':
+	mode => $mode,
+    }
+    Class['cluster::requirements'] -> Class['cluster']
 
     class {'cluster::management':
         key_source  => $management_key_source,
@@ -60,6 +65,7 @@ class cluster (
         data_dir => '/var/lib/zookeeper',
     }
     class { 'zookeeper::server': }
+
 
 #    class {'ganglia::client': 
 #        cluster => 'cluster',
